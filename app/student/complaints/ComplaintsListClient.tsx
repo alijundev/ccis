@@ -52,7 +52,18 @@ export default function ComplaintsListClient({ initialComplaints }: ComplaintsLi
   const filteredComplaints = initialComplaints.filter((item: any) => {
     const matchesSearch = item.text.toLowerCase().includes(search.toLowerCase()) || 
                           (item.location && item.location.toLowerCase().includes(search.toLowerCase()));
-    const matchesCategory = categoryFilter === "ALL" || item.category === categoryFilter;
+    
+    // Normalize category comparison for resilient filtering
+    const normalizeCat = (cat: string) => {
+      const c = cat.toLowerCase();
+      if (c.includes("wifi") || c.includes("internet")) return "wifi";
+      if (c.includes("kelas") || c.includes("ruang")) return "kelas";
+      if (c.includes("parkir")) return "parkir";
+      if (c.includes("toilet") || c.includes("wc")) return "toilet";
+      return "akademik";
+    };
+
+    const matchesCategory = categoryFilter === "ALL" || normalizeCat(item.category) === normalizeCat(categoryFilter);
     const matchesStatus = statusFilter === "ALL" || item.status === statusFilter;
     
     return matchesSearch && matchesCategory && matchesStatus;

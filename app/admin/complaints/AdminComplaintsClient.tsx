@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Search, 
   Filter, 
@@ -45,6 +45,11 @@ export default function AdminComplaintsClient({ initialComplaints }: AdminCompla
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  // Synchronize database updates down to client state
+  useEffect(() => {
+    setComplaints(initialComplaints);
+  }, [initialComplaints]);
+
   const categories = ["ALL", "WiFi / Internet", "Ruang Kelas", "Parkiran", "Toilet", "Pelayanan Akademik"];
   const statuses = [
     { value: "ALL", label: "Semua Status" },
@@ -52,14 +57,25 @@ export default function AdminComplaintsClient({ initialComplaints }: AdminCompla
     { value: "IN_PROGRESS", label: "Diproses" },
     { value: "RESOLVED", label: "Selesai" }
   ];
-  const severities = ["ALL", "TINGGI", "SEDANG", "RENDAH"];
+  const severities = ["ALL", "KRITIS", "TINGGI", "SEDANG", "RENDAH"];
 
   const filteredComplaints = complaints.filter(item => {
     const matchesSearch = item.text.toLowerCase().includes(search.toLowerCase()) || 
                           item.userName.toLowerCase().includes(search.toLowerCase()) ||
                           item.userNim.includes(search) ||
                           (item.location && item.location.toLowerCase().includes(search.toLowerCase()));
-    const matchesCategory = categoryFilter === "ALL" || item.category === categoryFilter;
+    
+    // Normalize category comparison for resilient filtering
+    const normalizeCat = (cat: string) => {
+      const c = cat.toLowerCase();
+      if (c.includes("wifi") || c.includes("internet")) return "wifi";
+      if (c.includes("kelas") || c.includes("ruang")) return "kelas";
+      if (c.includes("parkir")) return "parkir";
+      if (c.includes("toilet") || c.includes("wc")) return "toilet";
+      return "akademik";
+    };
+
+    const matchesCategory = categoryFilter === "ALL" || normalizeCat(item.category) === normalizeCat(categoryFilter);
     const matchesStatus = statusFilter === "ALL" || item.status === statusFilter;
     const matchesSeverity = severityFilter === "ALL" || item.severity === severityFilter;
     

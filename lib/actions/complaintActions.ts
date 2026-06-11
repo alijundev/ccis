@@ -41,8 +41,21 @@ export async function analyzeComplaintText(text: string): Promise<ComplaintAnaly
     const data = await response.json();
     console.log("Respon API NLP Berhasil:", data);
     
-    // Map API outputs correctly
-    const category = data.kategori || "Pelayanan Akademik";
+    // Map API outputs correctly with normalization to match DB and UI filters
+    let category = data.kategori || "Pelayanan Akademik";
+    const rawCategoryLower = category.toLowerCase();
+    if (rawCategoryLower.includes("wifi") || rawCategoryLower.includes("internet") || rawCategoryLower.includes("jaringan")) {
+      category = "WiFi / Internet";
+    } else if (rawCategoryLower.includes("kelas") || rawCategoryLower.includes("ruang") || rawCategoryLower.includes("fasilitas")) {
+      category = "Ruang Kelas";
+    } else if (rawCategoryLower.includes("parkir")) {
+      category = "Parkiran";
+    } else if (rawCategoryLower.includes("toilet") || rawCategoryLower.includes("wc") || rawCategoryLower.includes("kamar mandi")) {
+      category = "Toilet";
+    } else {
+      category = "Pelayanan Akademik";
+    }
+
     const sentiment = (data.sentimen || "NEGATIF").toUpperCase();
     const severity = (data.tingkat_keparahan || "SEDANG").toUpperCase();
     
