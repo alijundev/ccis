@@ -74,7 +74,7 @@ export default function NewComplaintFormClient({ studentName }: NewComplaintForm
         category: res.category,
         sentiment: res.sentiment,
         severity: res.severity,
-        recommendations: res.recommendations
+        recommendations: res.recommendationsStudent
       });
     } catch (err: any) {
       clearInterval(interval);
