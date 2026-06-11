@@ -97,6 +97,8 @@ export default function ComplaintsListClient({ initialComplaints }: ComplaintsLi
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
+      case "KRITIS":
+        return <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-600/15 text-red-600 dark:text-red-400 border border-red-600/20">KRITIS</span>;
       case "TINGGI":
         return <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/15 text-rose-600 border border-rose-500/10">TINGGI</span>;
       case "SEDANG":

@@ -93,6 +93,8 @@ export default function AdminDashboardClient({ initialComplaints }: AdminDashboa
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
+      case "KRITIS":
+        return <span className="text-[10px] bg-red-600/15 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-md font-bold">KRITIS</span>;
       case "TINGGI":
         return <span className="text-[10px] bg-rose-500/15 text-rose-600 px-2 py-0.5 rounded-md font-bold">TINGGI</span>;
       case "SEDANG":

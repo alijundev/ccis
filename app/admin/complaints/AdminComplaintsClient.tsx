@@ -105,6 +105,8 @@ export default function AdminComplaintsClient({ initialComplaints }: AdminCompla
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
+      case "KRITIS":
+        return <span className="text-[10px] font-bold bg-red-600/15 text-red-600 dark:text-red-400 px-2 py-0.5 rounded border border-red-600/20">KRITIS</span>;
       case "TINGGI":
         return <span className="text-[10px] font-bold bg-rose-500/15 text-rose-600 px-2 py-0.5 rounded border border-rose-500/10">TINGGI</span>;
       case "SEDANG":
