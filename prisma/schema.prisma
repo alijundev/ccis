@@ -1,0 +1,44 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+model User {
+  id           String      @id @default(uuid())
+  nim          String?     @unique // NIM for students only, null for admins
+  username     String?     @unique // Username for admins only, null for students
+  name         String
+  passwordHash String
+  role         String      @default("STUDENT") // "STUDENT" | "ADMIN"
+  major        String?     // e.g., "Informatika" (students only)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  complaints   Complaint[]
+}
+
+model Complaint {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  text            String           @db.Text
+  location        String?
+  category        String
+  sentiment       String           // "POSITIF" | "NETRAL" | "NEGATIF"
+  severity        String           // "RENDAH" | "SEDANG" | "TINGGI"
+  status          String           @default("NEW") // "NEW" | "IN_PROGRESS" | "RESOLVED"
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  recommendations Recommendation[]
+}
+
+model Recommendation {
+  id          String    @id @default(uuid())
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  text        String    @db.Text
+}
