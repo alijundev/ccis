@@ -106,7 +106,8 @@ export type ComplaintScalarFieldEnum = (typeof ComplaintScalarFieldEnum)[keyof t
 export const RecommendationScalarFieldEnum = {
   id: 'id',
   complaintId: 'complaintId',
-  text: 'text'
+  text: 'text',
+  target: 'target'
 } as const
 
 export type RecommendationScalarFieldEnum = (typeof RecommendationScalarFieldEnum)[keyof typeof RecommendationScalarFieldEnum]

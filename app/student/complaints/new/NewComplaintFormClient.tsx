@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { submitComplaintAction } from "@/lib/actions/complaintActions";
+import { submitComplaintAction, analyzeComplaintText } from "@/lib/actions/complaintActions";
 import { 
   Sparkles, 
   ArrowRight, 
@@ -41,7 +41,7 @@ export default function NewComplaintFormClient({ studentName }: NewComplaintForm
     "Menyusun rancangan aksi penanganan..."
   ];
 
-  const triggerAnalysis = (e: React.FormEvent) => {
+  const triggerAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
     if (text.length < minChar) return;
 
@@ -49,89 +49,39 @@ export default function NewComplaintFormClient({ studentName }: NewComplaintForm
     setLoadingStep(0);
     setError("");
 
-    // Dynamic loading steps simulation
-    const interval = setInterval(async () => {
+    // Simulate loader steps progress
+    const interval = setInterval(() => {
       setLoadingStep((prev) => {
-        if (prev >= steps.length - 1) {
-          clearInterval(interval);
-          
-          // Trigger rule-based categorization simulation
-          // (matching our backend analysis dictionary for a consistent preview)
-          const lowerText = text.toLowerCase();
-          let category = "Pelayanan Akademik";
-          let sentiment = "NEGATIF";
-          let severity = "SEDANG";
-          
-          if (lowerText.includes("wifi") || lowerText.includes("internet") || lowerText.includes("koneksi") || lowerText.includes("jaringan") || lowerText.includes("hotspot")) {
-            category = "WiFi / Internet";
-          } else if (lowerText.includes("ac") || lowerText.includes("kelas") || lowerText.includes("ruang") || lowerText.includes("kursi") || lowerText.includes("proyektor") || lowerText.includes("papan tulis") || lowerText.includes("meja")) {
-            category = "Ruang Kelas";
-          } else if (lowerText.includes("parkir") || lowerText.includes("motor") || lowerText.includes("mobil") || lowerText.includes("helm") || lowerText.includes("karcis") || lowerText.includes("marka")) {
-            category = "Parkiran";
-          } else if (lowerText.includes("toilet") || lowerText.includes("air") || lowerText.includes("wc") || lowerText.includes("sabun") || lowerText.includes("kran") || lowerText.includes("mampet")) {
-            category = "Toilet";
-          }
-          
-          if (lowerText.includes("bagus") || lowerText.includes("puas") || lowerText.includes("bersih") || lowerText.includes("nyaman") || lowerText.includes("lancar") || lowerText.includes("terima kasih") || lowerText.includes("mantap") || lowerText.includes("keren") || lowerText.includes("rapi")) {
-            sentiment = "POSITIF";
-            severity = "RENDAH";
-          } else if (lowerText.includes("biasa") || lowerText.includes("lumayan") || lowerText.includes("cukup") || lowerText.includes("standar")) {
-            sentiment = "NETRAL";
-            severity = "RENDAH";
-          }
-          
-          if (sentiment === "NEGATIF") {
-            if (lowerText.includes("rusak berat") || lowerText.includes("parah") || lowerText.includes("mati") || lowerText.includes("tidak bisa") || lowerText.includes("hilang") || lowerText.includes("mampet total") || lowerText.includes("bocor keras") || lowerText.includes("darurat") || lowerText.includes("kecurian")) {
-              severity = "TINGGI";
-            } else if (lowerText.includes("lambat") || lowerText.includes("kurang") || lowerText.includes("kotor") || lowerText.includes("bocor") || lowerText.includes("antre") || lowerText.includes("panas")) {
-              severity = "SEDANG";
-            } else {
-              severity = "RENDAH";
-            }
-          }
-
-          const RULE_RECOMMENDATIONS: Record<string, Record<string, string[]>> = {
-            "WiFi / Internet": {
-              "RENDAH": ["Lakukan monitoring kualitas jaringan secara berkala."],
-              "SEDANG": ["Periksa access point pada lokasi keluhan Perpustakaan Lantai 2.", "Cek kestabilan koneksi jaringan dan bandwidth wifi."],
-              "TINGGI": ["Prioritaskan pengecekan jaringan di lokasi keluhan.", "Periksa access point dan bandwidth.", "Eskalasi ke unit teknis jaringan kampus."]
-            },
-            "Ruang Kelas": {
-              "RENDAH": ["Agendakan pembersihan rutin tambahan pada ruang kelas."],
-              "SEDANG": ["Periksa AC, pencahayaan, atau proyektor di ruang kelas terkait.", "Koordinasikan dengan unit sarana prasarana untuk perbaikan minor."],
-              "TINGGI": ["Segera eskalasi perbaikan fasilitas krusial proyektor mati di Ruang 3.2 Gedung B.", "Koordinasikan dengan unit sarana prasarana untuk penggantian kabel HDMI baru."]
-            },
-            "Parkiran": {
-              "RENDAH": ["Lakukan pengecatan ulang/perapian marka parkir di Parkiran Gedung C.", "Pasang rambu penunjuk arah parkir tambahan."],
-              "SEDANG": ["Tingkatkan patroli keamanan di area parkir pada jam sibuk.", "Atur ulang tata letak parkir untuk mengoptimalkan ruang."],
-              "TINGGI": ["Eskalasi keluhan mengenai kehilangan barang atau sengketa parkir ke pihak keamanan kampus.", "Lakukan perbaikan darurat pada gerbang otomatis atau aspal yang rusak berat."]
-            },
-            "Toilet": {
-              "RENDAH": ["Ingatkan petugas kebersihan untuk menjaga ketersediaan tisu dan sabun."],
-              "SEDANG": ["Lakukan perbaikan pada kran bocor atau saluran pembuangan lambat.", "Tingkatkan frekuensi pembersihan toilet dalam sehari."],
-              "TINGGI": ["Prioritaskan perbaikan pipa air utama yang pecah dan ganti kran wastafel toilet lantai 1.", "Ingatkan petugas kebersihan untuk mengeringkan genangan air agar lantai tidak licin."]
-            },
-            "Pelayanan Akademik": {
-              "RENDAH": ["Evaluasi kepuasan layanan loket akademik secara berkala."],
-              "SEDANG": ["Berikan feedback atau teguran kepada staf layanan terkait kelambatan respons.", "Sediakan panduan alur birokrasi yang lebih jelas untuk mahasiswa."],
-              "TINGGI": ["Eskalasi masalah administrasi krusial (nilai error, kendala wisuda/registrasi) ke Kepala Biro Akademik.", "Lakukan tinjauan menyeluruh terhadap sistem informasi akademik yang mengalami kendala sistemis."]
-            }
-          };
-
-          const recommendations = RULE_RECOMMENDATIONS[category]?.[severity] || ["Terima kasih atas laporan Anda. Kami akan melakukan verifikasi terlebih dahulu."];
-
-          setAnalysisResult({
-            category,
-            sentiment,
-            severity,
-            recommendations
-          });
-          setIsAnalyzing(false);
-          return prev;
+        if (prev < steps.length - 1) {
+          return prev + 1;
         }
-        return prev + 1;
+        return prev;
       });
-    }, 400);
+    }, 250);
+
+    try {
+      // Call the real Server Action connected to Hugging Face
+      const res = await analyzeComplaintText(text);
+      clearInterval(interval);
+      setLoadingStep(steps.length - 1);
+
+      if (res.error) {
+        setError(res.error);
+        return;
+      }
+
+      setAnalysisResult({
+        category: res.category,
+        sentiment: res.sentiment,
+        severity: res.severity,
+        recommendations: res.recommendations
+      });
+    } catch (err: any) {
+      clearInterval(interval);
+      setError(err.message || "Gagal menganalisis keluhan. Coba kirim ulang beberapa saat lagi.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleFinalSubmit = async () => {

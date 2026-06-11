@@ -28,18 +28,21 @@ export type RecommendationMinAggregateOutputType = {
   id: string | null
   complaintId: string | null
   text: string | null
+  target: string | null
 }
 
 export type RecommendationMaxAggregateOutputType = {
   id: string | null
   complaintId: string | null
   text: string | null
+  target: string | null
 }
 
 export type RecommendationCountAggregateOutputType = {
   id: number
   complaintId: number
   text: number
+  target: number
   _all: number
 }
 
@@ -48,18 +51,21 @@ export type RecommendationMinAggregateInputType = {
   id?: true
   complaintId?: true
   text?: true
+  target?: true
 }
 
 export type RecommendationMaxAggregateInputType = {
   id?: true
   complaintId?: true
   text?: true
+  target?: true
 }
 
 export type RecommendationCountAggregateInputType = {
   id?: true
   complaintId?: true
   text?: true
+  target?: true
   _all?: true
 }
 
@@ -139,6 +145,7 @@ export type RecommendationGroupByOutputType = {
   id: string
   complaintId: string
   text: string
+  target: string
   _count: RecommendationCountAggregateOutputType | null
   _min: RecommendationMinAggregateOutputType | null
   _max: RecommendationMaxAggregateOutputType | null
@@ -166,6 +173,7 @@ export type RecommendationWhereInput = {
   id?: Prisma.StringFilter<"Recommendation"> | string
   complaintId?: Prisma.StringFilter<"Recommendation"> | string
   text?: Prisma.StringFilter<"Recommendation"> | string
+  target?: Prisma.StringFilter<"Recommendation"> | string
   complaint?: Prisma.XOR<Prisma.ComplaintScalarRelationFilter, Prisma.ComplaintWhereInput>
 }
 
@@ -173,6 +181,7 @@ export type RecommendationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   complaintId?: Prisma.SortOrder
   text?: Prisma.SortOrder
+  target?: Prisma.SortOrder
   complaint?: Prisma.ComplaintOrderByWithRelationInput
 }
 
@@ -183,6 +192,7 @@ export type RecommendationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.RecommendationWhereInput | Prisma.RecommendationWhereInput[]
   complaintId?: Prisma.StringFilter<"Recommendation"> | string
   text?: Prisma.StringFilter<"Recommendation"> | string
+  target?: Prisma.StringFilter<"Recommendation"> | string
   complaint?: Prisma.XOR<Prisma.ComplaintScalarRelationFilter, Prisma.ComplaintWhereInput>
 }, "id">
 
@@ -190,6 +200,7 @@ export type RecommendationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   complaintId?: Prisma.SortOrder
   text?: Prisma.SortOrder
+  target?: Prisma.SortOrder
   _count?: Prisma.RecommendationCountOrderByAggregateInput
   _max?: Prisma.RecommendationMaxOrderByAggregateInput
   _min?: Prisma.RecommendationMinOrderByAggregateInput
@@ -202,11 +213,13 @@ export type RecommendationScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Recommendation"> | string
   complaintId?: Prisma.StringWithAggregatesFilter<"Recommendation"> | string
   text?: Prisma.StringWithAggregatesFilter<"Recommendation"> | string
+  target?: Prisma.StringWithAggregatesFilter<"Recommendation"> | string
 }
 
 export type RecommendationCreateInput = {
   id?: string
   text: string
+  target?: string
   complaint: Prisma.ComplaintCreateNestedOneWithoutRecommendationsInput
 }
 
@@ -214,11 +227,13 @@ export type RecommendationUncheckedCreateInput = {
   id?: string
   complaintId: string
   text: string
+  target?: string
 }
 
 export type RecommendationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
   complaint?: Prisma.ComplaintUpdateOneRequiredWithoutRecommendationsNestedInput
 }
 
@@ -226,23 +241,27 @@ export type RecommendationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   complaintId?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecommendationCreateManyInput = {
   id?: string
   complaintId: string
   text: string
+  target?: string
 }
 
 export type RecommendationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecommendationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   complaintId?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecommendationListRelationFilter = {
@@ -259,18 +278,21 @@ export type RecommendationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   complaintId?: Prisma.SortOrder
   text?: Prisma.SortOrder
+  target?: Prisma.SortOrder
 }
 
 export type RecommendationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   complaintId?: Prisma.SortOrder
   text?: Prisma.SortOrder
+  target?: Prisma.SortOrder
 }
 
 export type RecommendationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   complaintId?: Prisma.SortOrder
   text?: Prisma.SortOrder
+  target?: Prisma.SortOrder
 }
 
 export type RecommendationCreateNestedManyWithoutComplaintInput = {
@@ -318,11 +340,13 @@ export type RecommendationUncheckedUpdateManyWithoutComplaintNestedInput = {
 export type RecommendationCreateWithoutComplaintInput = {
   id?: string
   text: string
+  target?: string
 }
 
 export type RecommendationUncheckedCreateWithoutComplaintInput = {
   id?: string
   text: string
+  target?: string
 }
 
 export type RecommendationCreateOrConnectWithoutComplaintInput = {
@@ -358,26 +382,31 @@ export type RecommendationScalarWhereInput = {
   id?: Prisma.StringFilter<"Recommendation"> | string
   complaintId?: Prisma.StringFilter<"Recommendation"> | string
   text?: Prisma.StringFilter<"Recommendation"> | string
+  target?: Prisma.StringFilter<"Recommendation"> | string
 }
 
 export type RecommendationCreateManyComplaintInput = {
   id?: string
   text: string
+  target?: string
 }
 
 export type RecommendationUpdateWithoutComplaintInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecommendationUncheckedUpdateWithoutComplaintInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecommendationUncheckedUpdateManyWithoutComplaintInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -386,6 +415,7 @@ export type RecommendationSelect<ExtArgs extends runtime.Types.Extensions.Intern
   id?: boolean
   complaintId?: boolean
   text?: boolean
+  target?: boolean
   complaint?: boolean | Prisma.ComplaintDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recommendation"]>
 
@@ -393,6 +423,7 @@ export type RecommendationSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   complaintId?: boolean
   text?: boolean
+  target?: boolean
   complaint?: boolean | Prisma.ComplaintDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recommendation"]>
 
@@ -400,6 +431,7 @@ export type RecommendationSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   complaintId?: boolean
   text?: boolean
+  target?: boolean
   complaint?: boolean | Prisma.ComplaintDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recommendation"]>
 
@@ -407,9 +439,10 @@ export type RecommendationSelectScalar = {
   id?: boolean
   complaintId?: boolean
   text?: boolean
+  target?: boolean
 }
 
-export type RecommendationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "complaintId" | "text", ExtArgs["result"]["recommendation"]>
+export type RecommendationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "complaintId" | "text" | "target", ExtArgs["result"]["recommendation"]>
 export type RecommendationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   complaint?: boolean | Prisma.ComplaintDefaultArgs<ExtArgs>
 }
@@ -429,6 +462,7 @@ export type $RecommendationPayload<ExtArgs extends runtime.Types.Extensions.Inte
     id: string
     complaintId: string
     text: string
+    target: string
   }, ExtArgs["result"]["recommendation"]>
   composites: {}
 }
@@ -856,6 +890,7 @@ export interface RecommendationFieldRefs {
   readonly id: Prisma.FieldRef<"Recommendation", 'String'>
   readonly complaintId: Prisma.FieldRef<"Recommendation", 'String'>
   readonly text: Prisma.FieldRef<"Recommendation", 'String'>
+  readonly target: Prisma.FieldRef<"Recommendation", 'String'>
 }
     
 

@@ -156,10 +156,19 @@ async function main() {
 
     // Create recommendations linked to complaint
     for (const recText of recommendations) {
+      const isForAdmin = recText.toLowerCase().includes("petugas") || 
+                        recText.toLowerCase().includes("periksa") || 
+                        recText.toLowerCase().includes("eskalasi") || 
+                        recText.toLowerCase().includes("lakukan") || 
+                        recText.toLowerCase().includes("berikan") || 
+                        recText.toLowerCase().includes("koordinasikan") || 
+                        recText.toLowerCase().includes("prioritaskan") || 
+                        recText.toLowerCase().includes("ingatkan");
       await prisma.recommendation.create({
         data: {
           complaintId: complaint.id,
-          text: recText
+          text: recText,
+          target: isForAdmin ? "ADMIN" : "STUDENT"
         }
       });
     }

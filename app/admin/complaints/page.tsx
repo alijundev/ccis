@@ -34,7 +34,7 @@ export default async function AdminComplaintsPage() {
     severity: c.severity,
     status: c.status,
     createdAt: c.createdAt.toISOString(),
-    recommendations: c.recommendations.map((r) => r.text),
+    recommendations: c.recommendations.filter((r) => r.target === "ADMIN").map((r) => r.text),
   }));
 
   return <AdminComplaintsClient initialComplaints={mappedComplaints} />;

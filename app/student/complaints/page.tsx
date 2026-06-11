@@ -12,11 +12,17 @@ export default async function StudentComplaintsPage() {
   }
 
   // Fetch student's complaints with recommendations
-  const complaints = await db.complaint.findMany({
+  const dbComplaints = await db.complaint.findMany({
     where: { userId: session.userId },
     include: { recommendations: true },
     orderBy: { createdAt: "desc" },
   });
+
+  // Map to filter recommendations targeting the STUDENT
+  const mappedComplaints = dbComplaints.map((c) => ({
+    ...c,
+    recommendations: c.recommendations.filter((r) => r.target === "STUDENT")
+  }));
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -37,7 +43,7 @@ export default async function StudentComplaintsPage() {
       </div>
 
       {/* Interactive client filter and display list */}
-      <ComplaintsListClient initialComplaints={complaints} />
+      <ComplaintsListClient initialComplaints={mappedComplaints as any} />
     </div>
   );
 }

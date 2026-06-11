@@ -41,4 +41,5 @@ model Recommendation {
   complaintId String
   complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
   text        String    @db.Text
+  target      String    @default("STUDENT") // "STUDENT" | "ADMIN"
 }

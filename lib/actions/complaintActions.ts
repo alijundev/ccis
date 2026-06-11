@@ -9,8 +9,10 @@ export interface ComplaintAnalysis {
   category: string;
   sentiment: string;
   severity: string;
-  recommendations: string[];
+  recommendationsStudent: string[];
+  recommendationsAdmin: string[];
   confidence?: string;
+  error?: string;
 }
 
 /// Remote NLP API analyzer
@@ -48,26 +50,29 @@ export async function analyzeComplaintText(text: string): Promise<ComplaintAnaly
     const avgConf = ((data.kategori_confidence || 90) + (data.sentimen_confidence || 90)) / 2;
     const confidence = `${avgConf.toFixed(1)}%`;
     
-    // Combine student and admin recommendations
-    const recs: string[] = [];
-    if (Array.isArray(data.rekomendasi_mahasiswa)) {
-      recs.push(...data.rekomendasi_mahasiswa);
-    }
-    if (Array.isArray(data.rekomendasi_admin)) {
-      recs.push(...data.rekomendasi_admin);
-    }
+    // Split student and admin recommendations
+    const recsStudent = Array.isArray(data.rekomendasi_mahasiswa) ? data.rekomendasi_mahasiswa : [];
+    const recsAdmin = Array.isArray(data.rekomendasi_admin) ? data.rekomendasi_admin : [];
     
     return {
       category,
       sentiment,
       severity,
-      recommendations: recs.length > 0 ? recs : ["Terima kasih atas laporan Anda. Kami akan melakukan verifikasi terlebih dahulu."],
+      recommendationsStudent: recsStudent.length > 0 ? recsStudent : ["Terima kasih atas laporan Anda. Kami akan melakukan verifikasi terlebih dahulu."],
+      recommendationsAdmin: recsAdmin.length > 0 ? recsAdmin : ["Lakukan pemeriksaan pada keluhan mahasiswa terkait."],
       confidence
     };
   } catch (error: any) {
     clearTimeout(timeoutId);
     console.error("Kesalahan API NLP:", error);
-    throw new Error(error.message || "Gagal menghubungi layanan analisis NLP.");
+    return {
+      category: "Pelayanan Akademik",
+      sentiment: "NEGATIF",
+      severity: "SEDANG",
+      recommendationsStudent: ["Gagal memuat rekomendasi mahasiswa otomatis karena koneksi terputus."],
+      recommendationsAdmin: ["Gagal memuat rekomendasi admin otomatis karena koneksi terputus."],
+      error: "Gagal terhubung ke layanan AI analisis keluhan (API Offline/Timeout). Pastikan server/space aktif."
+    };
   }
 }
 
@@ -87,6 +92,10 @@ export async function submitComplaintAction(formData: FormData) {
 
     const analysis = await analyzeComplaintText(text);
 
+    if (analysis.error) {
+      return { success: false, error: analysis.error };
+    }
+
     // Create complaint in DB
     const complaint = await db.complaint.create({
       data: {
@@ -100,18 +109,30 @@ export async function submitComplaintAction(formData: FormData) {
       }
     });
 
-    // Create matching recommendations in DB
-    for (const recText of analysis.recommendations) {
+    // Create matching recommendations for student in DB
+    for (const recText of analysis.recommendationsStudent) {
       await db.recommendation.create({
         data: {
           complaintId: complaint.id,
-          text: recText
+          text: recText,
+          target: "STUDENT"
         }
       });
     }
 
-    revalidatePath("/student");
-    revalidatePath("/admin");
+    // Create matching recommendations for admin in DB
+    for (const recText of analysis.recommendationsAdmin) {
+      await db.recommendation.create({
+        data: {
+          complaintId: complaint.id,
+          text: recText,
+          target: "ADMIN"
+        }
+      });
+    }
+
+    revalidatePath("/student/dashboard");
+    revalidatePath("/admin/dashboard");
 
     return { success: true, complaintId: complaint.id };
   } catch (err: any) {
