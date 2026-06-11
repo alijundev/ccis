@@ -62,10 +62,21 @@ export default function AdminDashboardClient({ initialComplaints }: AdminDashboa
 
   // Chart 1: Category distribution
   const categoriesList = ["WiFi / Internet", "Ruang Kelas", "Parkiran", "Toilet", "Pelayanan Akademik"];
+  
+  const normalizeCat = (cat: string) => {
+    const c = cat.toLowerCase();
+    if (c.includes("wifi") || c.includes("internet")) return "wifi";
+    if (c.includes("kelas") || c.includes("ruang")) return "kelas";
+    if (c.includes("parkir")) return "parkir";
+    if (c.includes("toilet") || c.includes("wc")) return "toilet";
+    return "akademik";
+  };
+
   const categoryData = categoriesList.map(cat => {
+    const targetNorm = normalizeCat(cat);
     return {
       name: cat.split(" / ")[0], // Shorter name for chart labels
-      "Jumlah Keluhan": complaints.filter(c => c.category === cat).length
+      "Jumlah Keluhan": complaints.filter(c => normalizeCat(c.category) === targetNorm).length
     };
   });
 
